@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://boe4j44i6me18"]
+
+[ext_resource type="PackedScene" uid="uid://ccsocck3s5afe" path="res://data/spaceship.fbx" id="1_3vyb7"]
+[ext_resource type="Script" uid="uid://chac8ev04uob3" path="res://scripts/player.gd" id="1_g2els"]
+
+[node name="Player" type="Node3D" groups=["player"]]
+script = ExtResource("1_g2els")
+
+[node name="spaceship" parent="." groups=["ship"] instance=ExtResource("1_3vyb7")]
+transform = Transform3D(0.573068, 0, 0, 0, 0.573068, 0, 0, 0, 0.573068, 0, 0, 0)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-1, 0, 8.74228e-08, 5.36363e-08, 0.789673, 0.613527, -6.90355e-08, 0.613527, -0.789673, 9.61096e-08, 0, -5.13031)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-1, -2.13163e-14, 8.74228e-08, 2.57773e-08, 0.955541, 0.294858, -8.35361e-08, 0.294858, -0.955541, 3.98185e-07, 3.79953, -5.96592)

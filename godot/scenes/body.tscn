@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://cf5vfkbhnqjx0"]
+
+[ext_resource type="Script" uid="uid://bhitc8xdjmius" path="res://scripts/body.gd" id="1_jmcoc"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v3ux1"]
+
+[node name="Body" type="Node3D" groups=["body"]]
+script = ExtResource("1_jmcoc")
+
+[node name="Model" type="CSGSphere3D" parent="."]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
+radius = 1.0
+radial_segments = 20
+rings = 15
+smooth_faces = false
+material = SubResource("StandardMaterial3D_v3ux1")

@@ -1,0 +1,25 @@
+name: Build & Test Linux
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "**.rs"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - ".github/workflows/linux.yml"
+
+jobs: 
+  all:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions-rs/cargo@v1
+      env:
+        TMPDIR: .
+        RUST_LOG: INFO
+        RUST_BACKTRACE: 1
+      with:
+        command: test
+        args: --lib

@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://b1dhh55ff2wom"]
+
+[node name="StarLight" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
