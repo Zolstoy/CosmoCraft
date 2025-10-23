@@ -1,6 +1,6 @@
 use anyhow::{bail, Result};
 use clap::Parser;
-use spacebuild::{
+use cosmocraft::{
     server::{self, InstanceConfig, ServerConfig},
     tls::ServerPki,
     tracing,
@@ -23,7 +23,7 @@ struct Args {
     #[arg(short, long, default_value = "galaxy.db")]
     instance: String,
 
-    #[arg(long, default_value = "spacebuild::(.*)", value_name = "REGEX")]
+    #[arg(long, default_value = "cosmocraft::(.*)", value_name = "REGEX")]
     trace_filter: String,
 
     #[arg(long, default_value = "INFO", value_name = "TRACE|DEBUG|INFO|WARN|ERROR")]
@@ -60,7 +60,7 @@ async fn main() -> anyhow::Result<()> {
     });
 
     let server_hdl: JoinHandle<Result<()>> = tokio::spawn(async move {
-        if let spacebuild::Result::Err(err) = server::run(
+        if let cosmocraft::Result::Err(err) = server::run(
             InstanceConfig::UserSqliteDb { path: args.instance },
             ServerConfig {
                 tcp: server::TcpConfig::Port(args.port),

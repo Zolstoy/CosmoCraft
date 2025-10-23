@@ -11,7 +11,7 @@ pub fn init(maybe_filter: Option<String>) {
     let target_regex_str = if let Some(filter) = maybe_filter {
         filter
     } else {
-        let maybe_trace_filter = env::var("SPACEBUILD_TRACE_FILTER");
+        let maybe_trace_filter = env::var("cosmocraft_TRACE_FILTER");
         if maybe_trace_filter.is_err() {
             format!("(.*)")
         } else {

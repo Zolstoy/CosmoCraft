@@ -1,7 +1,7 @@
 use crate::error::Error;
 use crate::protocol::Action;
 use crate::{body::Body, player::Player, sqldb::SqlDb};
-use crate::{spacebuild_log, Result};
+use crate::{cosmocraft_log, Result};
 use is_printable::IsPrintable;
 use sqlx::Row;
 use std::vec;
@@ -338,7 +338,7 @@ impl PlayerCache {
                 )
                 .await;
 
-            spacebuild_log!(trace, "cache", "last insert id: {}", new_player.id);
+            cosmocraft_log!(trace, "cache", "last insert id: {}", new_player.id);
             new_player.id
         };
         self.cache.insert(id, new_player);

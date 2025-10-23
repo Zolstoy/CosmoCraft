@@ -1,7 +1,7 @@
 use crate::error::Error;
 use crate::protocol::state::Body;
 use crate::protocol::{IntoMessage, ShipState};
-use crate::spacebuild_log;
+use crate::cosmocraft_log;
 use crate::tls::{get_connector, ClientPki};
 use crate::{
     protocol::{Action, Login},
@@ -114,7 +114,7 @@ impl<S: AsyncRead + AsyncWrite + Unpin> Bot<S> {
             match game_state {
                 crate::protocol::state::Game::Env(bodies) => return Ok(bodies),
                 _ => {
-                    spacebuild_log!(info, "tests", "Unexpected game info: {:?}", game_state);
+                    cosmocraft_log!(info, "tests", "Unexpected game info: {:?}", game_state);
                 }
             }
         }

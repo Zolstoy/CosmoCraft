@@ -116,7 +116,7 @@ func launch(world_name):
 		process = OS.execute_with_pipe(server_path, args)
 	else:
 		var args = ["0", "--instance", ProjectSettings.globalize_path("user://%s.db" % world_name), "--trace-level", "INFO"]
-		process = OS.execute_with_pipe("./spacebuild-server", args)
+		process = OS.execute_with_pipe("./cosmocraft-server", args)
 
 	if process.is_empty():
 		printerr("Failed to run server")

@@ -5,7 +5,7 @@ use std::time::Duration;
 use clap::Parser;
 
 use anyhow::Result;
-use spacebuild::{
+use cosmocraft::{
     bot::{self, Bot},
     tls::ClientPki,
 };
@@ -28,7 +28,7 @@ struct Args {
     )]
     tls: Option<Option<String>>,
 
-    #[arg(long, default_value = "spacebuild::(.*)", value_name = "REGEX")]
+    #[arg(long, default_value = "cosmocraft::(.*)", value_name = "REGEX")]
     trace_filter: String,
 
     #[arg(long, default_value = "INFO", value_name = "TRACE|DEBUG|INFO|WARN|ERROR")]

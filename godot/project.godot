@@ -12,7 +12,7 @@ config_version=5
 
 config/name="space-build-client"
 run/main_scene="res://scenes/main.tscn"
-config/custom_user_dir_name="spacebuild"
+config/custom_user_dir_name="cosmocraft"
 config/features=PackedStringArray("4.5", "Forward Plus")
 run/max_fps=60
 boot_splash/bg_color=Color(0, 0, 0, 1)

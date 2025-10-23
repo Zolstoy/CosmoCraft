@@ -6,7 +6,7 @@ use tokio::sync::mpsc::{error::TryRecvError, Receiver, Sender};
 use crate::{
     body::Body,
     protocol::{self, Action},
-    spacebuild_log,
+    cosmocraft_log,
 };
 
 pub struct Player {
@@ -54,7 +54,7 @@ impl Player {
             match self.action_recv.try_recv() {
                 Err(TryRecvError::Empty) => break,
                 Err(TryRecvError::Disconnected) => {
-                    spacebuild_log!(info, "Player", "Channel disconnected");
+                    cosmocraft_log!(info, "Player", "Channel disconnected");
                     return false;
                 }
                 Ok(action) => match action {
@@ -70,7 +70,7 @@ impl Player {
                         }
                     }
                     Action::Ping((body_id, body_rot_angle)) => {
-                        spacebuild_log!(info, "Player", "Ping: ({body_id}, {body_rot_angle})");
+                        cosmocraft_log!(info, "Player", "Ping: ({body_id}, {body_rot_angle})");
                         let mut prev_phi = 0f64;
                         let mut i = 0;
 
@@ -109,7 +109,7 @@ impl Player {
                             .await
                             .is_err()
                         {
-                            spacebuild_log!(warn, self.nickname, "Failed to send pong");
+                            cosmocraft_log!(warn, self.nickname, "Failed to send pong");
                         }
                     }
                     _ => todo!(),
@@ -122,7 +122,7 @@ impl Player {
         }
 
         if throttle_up || !self.first_state_sent {
-            spacebuild_log!(trace, "player", "Sending ");
+            cosmocraft_log!(trace, "player", "Sending ");
             let result = self
                 .state_send
                 .send(protocol::state::Game::Player(protocol::state::Player {
@@ -131,7 +131,7 @@ impl Player {
                 .await;
 
             if result.is_err() {
-                spacebuild_log!(warn, self.nickname, "Failed to send player info");
+                cosmocraft_log!(warn, self.nickname, "Failed to send player info");
             }
         }
 
@@ -148,7 +148,7 @@ impl Player {
             bodies.push(body.clone().into());
 
             if bodies.len() == 50 {
-                spacebuild_log!(
+                cosmocraft_log!(
                     trace,
                     format!("{}:{}", self.id, self.nickname),
                     "Sending {} bodies state data",

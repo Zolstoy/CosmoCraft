@@ -4,7 +4,7 @@ use crate::cache::PlayerCache;
 use crate::error::Error;
 use crate::galaxy::Galaxy;
 use crate::protocol::Action;
-use crate::spacebuild_log;
+use crate::cosmocraft_log;
 use crate::sqldb::SqlDb;
 use crate::Result;
 use rand::prelude::*;
@@ -49,7 +49,7 @@ impl Instance {
             }
         }
         for id in ids {
-            spacebuild_log!(info, "instance", "{} disconnect!", id);
+            cosmocraft_log!(info, "instance", "{} disconnect!", id);
             self.players.sync_and_unload(id).await;
         }
         self.history.push(self.bodies.cache.clone());
@@ -94,12 +94,12 @@ impl Instance {
     }
 
     pub async fn leave(&mut self, id: u32) {
-        spacebuild_log!(info, "instance", "Leave for {}", id);
+        cosmocraft_log!(info, "instance", "Leave for {}", id);
         self.players.sync_and_unload(id).await;
     }
 
     async fn new_player(&mut self, nickname: String) -> (u32, Sender<Action>, Receiver<crate::protocol::state::Game>) {
-        spacebuild_log!(info, "server", "New player, generating spawning bodies...");
+        cosmocraft_log!(info, "server", "New player, generating spawning bodies...");
 
         let offset = Spherical::from(
             self.rng.random_range(1000f64..100000f64),

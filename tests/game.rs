@@ -3,12 +3,12 @@ use test_helpers_async::*;
 
 #[before_all]
 #[cfg(test)]
-mod spacebuild_tests_game {
+mod cosmocraft_tests_game {
     use std::{env, sync::Arc};
 
+    use cosmocraft::{bot, cosmocraft_log, instance::Instance, protocol::state::Game, server, tls::ServerPki, tracing};
     use futures_time::{future::FutureExt, time::Duration};
     use scilib::coordinate::cartesian::Cartesian;
-    use spacebuild::{bot, instance::Instance, protocol::state::Game, server, spacebuild_log, tls::ServerPki, tracing};
     use tokio::{net::TcpListener, sync::Mutex, time::sleep};
     use uuid::Uuid;
 
@@ -97,8 +97,8 @@ lBjhUjWT859gkyO6pYSTfndSpnWAdtQK9zsTYociBQ==
     }
 
     pub fn before_all() {
-        tracing::init(Some("(spacebuild.*)".to_string()));
-        spacebuild_log!(info, "tests", "Timeout is {}s", TIMEOUT_DURATION);
+        tracing::init(Some("(cosmocraft.*)".to_string()));
+        cosmocraft_log!(info, "tests", "Timeout is {}s", TIMEOUT_DURATION);
     }
 
     const TIMEOUT_DURATION: u64 = 20;
@@ -117,7 +117,7 @@ lBjhUjWT859gkyO6pYSTfndSpnWAdtQK9zsTYociBQ==
     ) -> anyhow::Result<(
         Arc<Mutex<Instance>>,
         crossbeam::channel::Sender<()>,
-        tokio::task::JoinHandle<spacebuild::Result<()>>,
+        tokio::task::JoinHandle<cosmocraft::Result<()>>,
         u16,
     )> {
         let listener = test!(TcpListener::bind("localhost:0"))?;
@@ -141,7 +141,7 @@ lBjhUjWT859gkyO6pYSTfndSpnWAdtQK9zsTYociBQ==
             None
         };
         let (send_stop, recv_stop) = crossbeam::channel::bounded(1);
-        let game_thread: tokio::task::JoinHandle<spacebuild::Result<()>> = tokio::spawn(async move {
+        let game_thread: tokio::task::JoinHandle<cosmocraft::Result<()>> = tokio::spawn(async move {
             server::run(
                 server::InstanceConfig::UserInstance(instance_cln),
                 server::ServerConfig {
@@ -366,7 +366,7 @@ lBjhUjWT859gkyO6pYSTfndSpnWAdtQK9zsTYociBQ==
             test!(client.ping(first_env_state.first().unwrap().id, 0f64))?;
             let lag = test!(client.until_pong())?;
             sleep(std::time::Duration::from_millis(50)).await;
-            spacebuild_log!(info, "tests", "Ping-pong {}: {}", i, lag);
+            cosmocraft_log!(info, "tests", "Ping-pong {}: {}", i, lag);
         }
         send_stop.send(())?;
         test!(game_thread)??;

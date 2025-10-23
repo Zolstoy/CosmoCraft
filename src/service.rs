@@ -14,7 +14,7 @@ use tokio::sync::mpsc::Sender;
 use tokio::sync::Mutex;
 use tokio_stream::wrappers::ReceiverStream;
 extern crate scopeguard;
-use crate::spacebuild_log;
+use crate::cosmocraft_log;
 use crate::Result;
 
 pub(crate) struct Service<S>
@@ -44,7 +44,7 @@ where
         &mut self,
         message: Message,
     ) -> Result<(Sender<Action>, Receiver<crate::protocol::state::Game>)> {
-        spacebuild_log!(trace, self.address, "Handling authentication for new client");
+        cosmocraft_log!(trace, self.address, "Handling authentication for new client");
         match message {
             Message::Text(msg) => {
                 let maybe_action: serde_json::Result<Action> = serde_json::from_str(msg.as_str());
@@ -62,11 +62,11 @@ where
                 if let Action::Login(login) = maybe_login {
                     let mut guard = self.instance.lock().await;
 
-                    spacebuild_log!(info, self.address, "Login request for {}", login.nickname);
+                    cosmocraft_log!(info, self.address, "Login request for {}", login.nickname);
                     let maybe_data = guard.authenticate(login.nickname).await;
                     if maybe_data.is_err() {
                         auth_state.message = format!("{}", maybe_data.err().unwrap());
-                        spacebuild_log!(warn, self.address, "Login error: {}", auth_state.message);
+                        cosmocraft_log!(warn, self.address, "Login error: {}", auth_state.message);
                         return Err(Error::AuthenticationError(auth_state.message));
                     }
 
@@ -74,7 +74,7 @@ where
 
                     self.id = id;
 
-                    spacebuild_log!(trace, self.address, "Login success for {}", self.id);
+                    cosmocraft_log!(trace, self.address, "Login success for {}", self.id);
 
                     auth_state.success = true;
                     auth_state.message = self.id.to_string();
@@ -83,18 +83,18 @@ where
                     assert!(maybe_login_state_str.is_ok());
                     let result = self.websocket.send(Message::text(maybe_login_state_str.unwrap())).await;
                     if result.is_err() {
-                        spacebuild_log!(warn, self.address, "Message send error: {}", result.err().unwrap());
+                        cosmocraft_log!(warn, self.address, "Message send error: {}", result.err().unwrap());
                     }
 
                     Ok((action_send, state_recv))
                 } else {
-                    spacebuild_log!(warn, self.address, "Not an login action, closing client...");
+                    cosmocraft_log!(warn, self.address, "Not an login action, closing client...");
                     let _ = self.websocket.close(None).await;
                     return Err(Error::NotALoginAction);
                 }
             }
             _ => {
-                spacebuild_log!(warn, self.address, "Not a text message, closing client...");
+                cosmocraft_log!(warn, self.address, "Not a text message, closing client...");
                 let _ = self.websocket.close(None).await;
                 Err(Error::NotTextMessage)
             }
@@ -108,23 +108,23 @@ where
     ) -> Result<()> {
         let mut stream = ReceiverStream::new(recv);
 
-        spacebuild_log!(trace, self.address, "Starting gameplay loop for {}", self.id);
+        cosmocraft_log!(trace, self.address, "Starting gameplay loop for {}", self.id);
         loop {
             tokio::select! {
                 Some(game_state) = stream.next() => {
                     let str = serde_json::to_string(&game_state).unwrap();
                     let result = self.websocket.send(Message::text(str)).await;
                     if result.is_err() {
-                        spacebuild_log!(warn, self.address, "Could not send data to client {}: {}", self.id, result.err().unwrap());
+                        cosmocraft_log!(warn, self.address, "Could not send data to client {}: {}", self.id, result.err().unwrap());
                         self.instance.lock().await.leave(self.id).await;
                         let _ = self.websocket.close(None).await;
                         return Ok(());
                     }
                 },
                 Some(message) = self.websocket.next() => {
-                    spacebuild_log!(trace, self.address, "Message received");
+                    cosmocraft_log!(trace, self.address, "Message received");
                     if message.is_err() {
-                        spacebuild_log!(info, self.address, "Websocket read error: {}", message.err().unwrap());
+                        cosmocraft_log!(info, self.address, "Websocket read error: {}", message.err().unwrap());
                         self.instance.lock().await.leave(self.id).await;
                         return Ok(());
                     }
@@ -134,13 +134,13 @@ where
                                 serde_json::from_str(msg.as_str());
 
                             if maybe_action.is_err() {
-                                spacebuild_log!(warn, self.address, "bad JSON received: {}", msg);
+                                cosmocraft_log!(warn, self.address, "bad JSON received: {}", msg);
                                 return Ok(());
                             }
 
                             let res = send.send(maybe_action.unwrap()).await;
                             if res.is_err() {
-                                spacebuild_log!(warn, self.address, "Send error");
+                                cosmocraft_log!(warn, self.address, "Send error");
                                 return Ok(());
                             }
                         }
@@ -149,7 +149,7 @@ where
                             return Ok(());
                         }
                         _ => {
-                            spacebuild_log!(info, self.address, "Unexpected message type received: closing client");
+                            cosmocraft_log!(info, self.address, "Unexpected message type received: closing client");
                             self.instance.lock().await.leave(self.id).await;
                             return Ok(());
                         }
@@ -160,7 +160,7 @@ where
     }
 
     pub async fn serve(&mut self) -> Result<()> {
-        spacebuild_log!(trace, self.address, "About to serve gameplay");
+        cosmocraft_log!(trace, self.address, "About to serve gameplay");
         let message = self.websocket.next().await;
         if message.is_none() {
             return Ok(());

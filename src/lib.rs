@@ -20,7 +20,7 @@ pub mod tracing;
 pub type Result<T> = std::result::Result<T, crate::error::Error>;
 
 #[macro_export]
-macro_rules! spacebuild_log {
+macro_rules! cosmocraft_log {
     ( $level:ident, $section:expr, $fmt:expr $(, $arg:expr)*) => {
         {
             use colored::Colorize;
@@ -65,7 +65,7 @@ mod test_01_body_cache {
     use crate::{body, cache::BodyCache, sqldb::SqlDb};
 
     pub fn before_all() {
-        spacebuild_log!(info, "test", "Timeout is {}s", TIMEOUT_DURATION);
+        cosmocraft_log!(info, "test", "Timeout is {}s", TIMEOUT_DURATION);
     }
 
     const TIMEOUT_DURATION: u64 = 10;
@@ -154,8 +154,8 @@ mod test_02_player_cache {
     use crate::{cache::PlayerCache, sqldb::SqlDb, tracing};
 
     pub fn before_all() {
-        spacebuild_log!(info, "test", "Timeout is {}s", TIMEOUT_DURATION);
-        tracing::init(Some("(spacebuild.*)".to_string()));
+        cosmocraft_log!(info, "test", "Timeout is {}s", TIMEOUT_DURATION);
+        tracing::init(Some("(cosmocraft.*)".to_string()));
     }
 
     const TIMEOUT_DURATION: u64 = 10;
@@ -196,7 +196,7 @@ mod test_02_player_cache {
         let db_path = get_random_db_path();
         {
             let mut cache = bootstrap(&db_path).await;
-            spacebuild_log!(info, "tests", "{}", db_path);
+            cosmocraft_log!(info, "tests", "{}", db_path);
             let (player, _, _) = cache.new_player("test123".to_string()).await;
             assert_eq!(1, player.id);
             assert_eq!("test123", player.nickname);
@@ -280,7 +280,7 @@ mod test_03_player {
     use crate::{player::Player, protocol};
 
     pub fn before_all() {
-        spacebuild_log!(info, "test", "Timeout is {}s", TIMEOUT_DURATION);
+        cosmocraft_log!(info, "test", "Timeout is {}s", TIMEOUT_DURATION);
     }
 
     const TIMEOUT_DURATION: u64 = 10;

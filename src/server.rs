@@ -1,7 +1,7 @@
 use crate::error::Error;
 use crate::http;
 use crate::instance::Instance;
-use crate::spacebuild_log;
+use crate::cosmocraft_log;
 use crate::tls;
 use crate::tls::ClientPki;
 use crate::tls::ServerPki;
@@ -39,7 +39,7 @@ pub async fn run(
     let instance = match instance_config {
         InstanceConfig::UserInstance(instance) => instance,
         InstanceConfig::UserSqliteDb { path } => {
-            spacebuild_log!(info, "server", "Loading {}", path);
+            cosmocraft_log!(info, "server", "Loading {}", path);
             Arc::new(Mutex::new(Instance::from_path(path.as_str()).await?))
         }
     };
@@ -62,7 +62,7 @@ pub async fn run(
     let mut update_tick_delay = tokio::time::interval(tick_value);
     let mut save_tick_delay = tokio::time::interval(std::time::Duration::from_secs(30));
 
-    spacebuild_log!(
+    cosmocraft_log!(
         info,
         "server",
         "Server loop starts, listenning on {}",
@@ -77,20 +77,20 @@ pub async fn run(
 
                 let mut must_stop = false;
                 if stop.try_recv().is_ok() {
-                    spacebuild_log!(info, "server", "Stop signal received");
+                    cosmocraft_log!(info, "server", "Stop signal received");
                     must_stop = true;
                 }
 
                 let delta = now - ref_instant;
                 if delta > tick_value {
-                    spacebuild_log!(warn, "server", "Server loop is too slow: {}s", delta.as_secs_f64());
+                    cosmocraft_log!(warn, "server", "Server loop is too slow: {}s", delta.as_secs_f64());
                 }
                 ref_instant = now;
                 instance.lock().await.update(delta.as_secs_f64()).await;
 
                 if must_stop{
                     instance.lock().await.save_all().await;
-                    spacebuild_log!(info, "server", "Server loop stops now (on stop channel)!");
+                    cosmocraft_log!(info, "server", "Server loop stops now (on stop channel)!");
                     return Ok(())
                 }
             },
@@ -99,7 +99,7 @@ pub async fn run(
                 instance.lock().await.save_all().await;
             },
             Ok((stream, addr)) = listener.accept() => {
-                spacebuild_log!(info, "server", "TCP accept from: {}", addr);
+                cosmocraft_log!(info, "server", "TCP accept from: {}", addr);
 
                 let cln = Arc::clone(&instance);
                 if let Some(tls_acceptor) = tls_acceptor.clone() {
@@ -107,7 +107,7 @@ pub async fn run(
                     tokio::spawn(async move {
                         let tls_stream = acceptor.accept(stream).await.map_err(|_err| Error::FailedTlsHandshake);
                         if tls_stream.is_err() {
-                            spacebuild_log!(warn, "server", "TLS accept error: {}", tls_stream.is_err());
+                            cosmocraft_log!(warn, "server", "TLS accept error: {}", tls_stream.is_err());
                         } else {
                             http::run(tls_stream.unwrap(), cln, addr);
                         }

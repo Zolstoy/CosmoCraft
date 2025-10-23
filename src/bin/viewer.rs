@@ -17,7 +17,7 @@ use ratatui::{
     },
     DefaultTerminal, Frame,
 };
-use spacebuild::{
+use cosmocraft::{
     bot::{self, Bot},
     protocol::{state::Body, state::Game},
     tls::ClientPki,
@@ -80,7 +80,7 @@ async fn run<S: AsyncRead + AsyncWrite + Unpin>(mut client: Bot<S>) -> Result<()
 struct App {
     should_quit: bool,
     cursor: (u16, u16),
-    bodies: HashMap<u32, spacebuild::protocol::state::Body>,
+    bodies: HashMap<u32, cosmocraft::protocol::state::Body>,
     star: Body,
     list_scroll: usize,
     list_area: Rect,
