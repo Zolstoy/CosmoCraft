@@ -1,10 +1,10 @@
 use crate::body::Body;
 use crate::cache::BodyCache;
 use crate::cache::PlayerCache;
+use crate::cosmocraft_log;
 use crate::error::Error;
 use crate::galaxy::Galaxy;
 use crate::protocol::Action;
-use crate::cosmocraft_log;
 use crate::sqldb::SqlDb;
 use crate::Result;
 use rand::prelude::*;
@@ -143,7 +143,7 @@ impl Instance {
             planet.rotating_speed = self.rng.random_range(0.0001..0.001);
             let phi = self.rng.random_range(-TAU..TAU);
             let theta = self.rng.random_range(PI - 0.1..PI + 0.1);
-            let distance = self.rng.random_range(500f64..4000f64);
+            let distance = self.rng.random_range(2000f64..4500f64);
             let add_vec = Cartesian::from_coord(Spherical::from(distance, theta, phi));
             planet.coords = star.coords.clone() + add_vec;
             planet.gravity_center = star.id;
@@ -155,7 +155,7 @@ impl Instance {
                 moon.rotating_speed = self.rng.random_range(0.005..0.01);
                 let phi = self.rng.random_range(-TAU..TAU);
                 let theta = self.rng.random_range(PI - 0.1..PI + 0.1);
-                let distance = self.rng.random_range(30f64..200f64);
+                let distance = self.rng.random_range(80f64..250f64);
                 let add_vec = Cartesian::from_coord(Spherical::from(distance, theta, phi));
                 let mut cln = planet.coords.clone();
                 cln = cln + add_vec;
@@ -175,7 +175,7 @@ impl Instance {
             body.rotating_speed = self.rng.random_range(0.0001..0.001);
             let phi = self.rng.random_range(-TAU..TAU);
             let theta = self.rng.random_range(PI - 0.1..PI + 0.1);
-            let distance = self.rng.random_range(1500f64..4000f64);
+            let distance = self.rng.random_range(3000f64..6000f64);
             body.coords = star.coords.clone() + Cartesian::from_coord(Spherical::from(distance, theta, phi));
             body.gravity_center = star.id;
             self.galaxy.insert_body(body);

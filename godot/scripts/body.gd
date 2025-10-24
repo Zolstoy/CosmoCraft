@@ -8,6 +8,7 @@ var gravity_center_id = null
 var gravity_center: Node = null
 
 var current_rotation = 0
+
 func _ready() -> void:
 	pass
 

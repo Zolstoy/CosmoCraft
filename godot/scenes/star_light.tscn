@@ -2,4 +2,7 @@
 
 [node name="StarLight" type="Node3D"]
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+light_energy = 100000000.0
+omni_range = 10000.0
+omni_attenuation = 2.0
