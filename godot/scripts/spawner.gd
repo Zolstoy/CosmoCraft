@@ -42,22 +42,18 @@ func stop():
 
 func get_colored_body_node(type: String) -> Node:
 	var color: Color
-	var body_tree: Node3D
+	var body_tree: Node3D = body_scene.instantiate()
 	if type == "4":
-		body_tree = body_scene.instantiate()
 		body_tree.scale *= 0.01
 		color = Color(1, 0, 0)
 	elif type == "2":
-		body_tree = body_scene.instantiate()
 		body_tree.scale *= 1
 		color = Color(0, 0, 1)
 	elif type == "3":
-		body_tree = body_scene.instantiate()
 		body_tree.scale *= 0.1
 		color = Color(0, 1, 1)
 	elif type == "1":
-		body_tree = body_scene.instantiate()
-		body_tree.scale *= 100
+		body_tree.scale *= 10
 		#var star_light_tree: Node3D = star_light_scene.instantiate()
 		#star_light_tree.position = body_tree.position
 		#add_child(star_light_tree)
