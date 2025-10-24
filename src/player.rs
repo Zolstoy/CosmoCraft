@@ -5,8 +5,8 @@ use tokio::sync::mpsc::{error::TryRecvError, Receiver, Sender};
 
 use crate::{
     body::Body,
-    protocol::{self, Action},
     cosmocraft_log,
+    protocol::{self, Action},
 };
 
 pub struct Player {
@@ -76,13 +76,14 @@ impl Player {
 
                         for cache in history.iter().rev() {
                             if !cache.contains_key(&body_id) {
-                                break;
+                                // cosmocraft_log!(trace, self.nickname, "Body ID {body_id} not found in history");
+                                continue;
                             }
                             let ent = cache.get(&body_id).unwrap();
 
-                            if prev_phi == 0f64 {
-                                prev_phi = ent.current_rot;
-                            }
+                            // if prev_phi == 0f64 {
+                            //     prev_phi = ent.current_rot;
+                            // }
 
                             if body_rot_angle > ent.current_rot {
                                 self.prev_lag_values.push(
@@ -148,12 +149,6 @@ impl Player {
             bodies.push(body.clone().into());
 
             if bodies.len() == 50 {
-                cosmocraft_log!(
-                    trace,
-                    format!("{}:{}", self.id, self.nickname),
-                    "Sending {} bodies state data",
-                    bodies.len()
-                );
                 self.state_send
                     .send(protocol::state::Game::Env(bodies.clone()))
                     .await

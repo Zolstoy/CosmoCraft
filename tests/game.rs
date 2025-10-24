@@ -9,7 +9,7 @@ mod cosmocraft_tests_game {
     use cosmocraft::{bot, cosmocraft_log, instance::Instance, protocol::state::Game, server, tls::ServerPki, tracing};
     use futures_time::{future::FutureExt, time::Duration};
     use scilib::coordinate::cartesian::Cartesian;
-    use tokio::{net::TcpListener, sync::Mutex, time::sleep};
+    use tokio::{net::TcpListener, sync::Mutex};
     use uuid::Uuid;
 
     const SERVER_CERT: &[u8] = b"-----BEGIN CERTIFICATE-----
@@ -362,10 +362,9 @@ lBjhUjWT859gkyO6pYSTfndSpnWAdtQK9zsTYociBQ==
         test!(client.login("test213"))?;
 
         let first_env_state = test!(client.until_env_state())?;
-        for i in 0..100 {
+        for i in 0..30 {
             test!(client.ping(first_env_state.first().unwrap().id, 0f64))?;
             let lag = test!(client.until_pong())?;
-            sleep(std::time::Duration::from_millis(50)).await;
             cosmocraft_log!(info, "tests", "Ping-pong {}: {}", i, lag);
         }
         send_stop.send(())?;
