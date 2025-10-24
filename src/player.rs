@@ -71,38 +71,46 @@ impl Player {
                     }
                     Action::Ping((body_id, body_rot_angle)) => {
                         cosmocraft_log!(info, "Player", "Ping: ({body_id}, {body_rot_angle})");
-                        let mut prev_phi = 0f64;
-                        let mut i = 0;
 
-                        for cache in history.iter().rev() {
-                            if !cache.contains_key(&body_id) {
-                                // cosmocraft_log!(trace, self.nickname, "Body ID {body_id} not found in history");
-                                continue;
-                            }
-                            let ent = cache.get(&body_id).unwrap();
+                        let last_cache = history.last().unwrap();
+                        if last_cache.contains_key(&body_id) {
+                            let mut prev_phi = last_cache.get(&body_id).unwrap().current_rot;
+                            let mut i = 1;
+                            // showing first phi and body_rot_angle
+                            cosmocraft_log!(
+                                info,
+                                "Player",
+                                "First phi: {prev_phi}, body_rot_angle: {body_rot_angle}"
+                            );
 
-                            // if prev_phi == 0f64 {
-                            //     prev_phi = ent.current_rot;
-                            // }
-
-                            if body_rot_angle > ent.current_rot {
-                                self.prev_lag_values.push(
-                                    (i as f64) * 0.01 + ((prev_phi - body_rot_angle) / (prev_phi - ent.current_rot)),
-                                );
-                                if self.prev_lag_values.len() > 1000 {
-                                    self.prev_lag_values.remove(0);
+                            while i < history.len() {
+                                let cache = &history[history.len() - 1 - i];
+                                if !cache.contains_key(&body_id) {
+                                    break;
                                 }
-                                break;
-                            }
-                            prev_phi = ent.current_rot;
-                            i += 1;
-                        }
 
-                        let average_lag_value = if !self.prev_lag_values.is_empty() {
+                                let ent = cache.get(&body_id).unwrap();
+                                if body_rot_angle > ent.current_rot {
+                                    self.prev_lag_values
+                                        .push((i as f64) * 0.1 + ((prev_phi - body_rot_angle) / (ent.rotating_speed)));
+                                    if self.prev_lag_values.len() > 1000 {
+                                        self.prev_lag_values.remove(0);
+                                    }
+                                    break;
+                                }
+                                prev_phi = ent.current_rot;
+                                i += 1;
+                            }
+                        }
+                        let mut average_lag_value = if !self.prev_lag_values.is_empty() {
                             self.prev_lag_values.iter().sum::<f64>() / self.prev_lag_values.len() as f64
                         } else {
-                            0f64
+                            -1f64
                         };
+
+                        if !average_lag_value.is_normal() {
+                            average_lag_value = -1f64;
+                        }
 
                         if self
                             .state_send
@@ -148,7 +156,7 @@ impl Player {
         for body in env {
             bodies.push(body.clone().into());
 
-            if bodies.len() == 50 {
+            if bodies.len() == 200 {
                 self.state_send
                     .send(protocol::state::Game::Env(bodies.clone()))
                     .await

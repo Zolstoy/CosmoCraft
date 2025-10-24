@@ -1,7 +1,7 @@
+use crate::cosmocraft_log;
 use crate::error::Error;
 use crate::protocol::state::Body;
 use crate::protocol::{IntoMessage, ShipState};
-use crate::cosmocraft_log;
 use crate::tls::{get_connector, ClientPki};
 use crate::{
     protocol::{Action, Login},
@@ -122,6 +122,7 @@ impl<S: AsyncRead + AsyncWrite + Unpin> Bot<S> {
 
     pub async fn until_pong(&mut self) -> Result<f64> {
         loop {
+            // cosmocraft_log!(info, "tests", "Waiting for pong...");
             let game_state = self.next_game_state().await?;
 
             if let crate::protocol::state::Game::Pong(value) = game_state {

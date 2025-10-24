@@ -362,10 +362,14 @@ lBjhUjWT859gkyO6pYSTfndSpnWAdtQK9zsTYociBQ==
         test!(client.login("test213"))?;
 
         let first_env_state = test!(client.until_env_state())?;
-        for i in 0..30 {
-            test!(client.ping(first_env_state.first().unwrap().id, 0f64))?;
+        let mut rotation = 0f64;
+        for i in 0..10 {
+            test!(client.ping(first_env_state.first().unwrap().id, rotation))?;
+            tokio::time::sleep(*Duration::from_millis(100)).await;
+            rotation += first_env_state.first().unwrap().rotating_speed;
+            cosmocraft_log!(info, "tests", "Sent ping {} with rotation {}", i, rotation);
             let lag = test!(client.until_pong())?;
-            cosmocraft_log!(info, "tests", "Ping-pong {}: {}", i, lag);
+            cosmocraft_log!(info, "tests", "Received pong {} with lag {}", i, lag);
         }
         send_stop.send(())?;
         test!(game_thread)??;
