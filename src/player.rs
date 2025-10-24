@@ -87,7 +87,7 @@ impl Player {
 
                             if body_rot_angle > ent.current_rot {
                                 self.prev_lag_values.push(
-                                    (i as f64) * 0.1 + ((prev_phi - body_rot_angle) / (prev_phi - ent.current_rot)),
+                                    (i as f64) * 0.01 + ((prev_phi - body_rot_angle) / (prev_phi - ent.current_rot)),
                                 );
                                 if self.prev_lag_values.len() > 1000 {
                                     self.prev_lag_values.remove(0);
