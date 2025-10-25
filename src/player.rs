@@ -70,18 +70,10 @@ impl Player {
                         }
                     }
                     Action::Ping((body_id, body_rot_angle)) => {
-                        cosmocraft_log!(info, "Player", "Ping: ({body_id}, {body_rot_angle})");
-
                         let last_cache = history.last().unwrap();
                         if last_cache.contains_key(&body_id) {
                             let mut prev_phi = last_cache.get(&body_id).unwrap().current_rot;
                             let mut i = 1;
-                            // showing first phi and body_rot_angle
-                            cosmocraft_log!(
-                                info,
-                                "Player",
-                                "First phi: {prev_phi}, body_rot_angle: {body_rot_angle}"
-                            );
 
                             while i < history.len() {
                                 let cache = &history[history.len() - 1 - i];
@@ -92,7 +84,7 @@ impl Player {
                                 let ent = cache.get(&body_id).unwrap();
                                 if body_rot_angle > ent.current_rot {
                                     self.prev_lag_values
-                                        .push((i as f64) * 0.1 + ((prev_phi - body_rot_angle) / (ent.rotating_speed)));
+                                        .push((i as f64) * 0.1 + ((prev_phi - body_rot_angle) / ent.rotating_speed));
                                     if self.prev_lag_values.len() > 1000 {
                                         self.prev_lag_values.remove(0);
                                     }

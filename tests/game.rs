@@ -367,7 +367,6 @@ lBjhUjWT859gkyO6pYSTfndSpnWAdtQK9zsTYociBQ==
             test!(client.ping(first_env_state.first().unwrap().id, rotation))?;
             tokio::time::sleep(*Duration::from_millis(100)).await;
             rotation += first_env_state.first().unwrap().rotating_speed;
-            cosmocraft_log!(info, "tests", "Sent ping {} with rotation {}", i, rotation);
             let lag = test!(client.until_pong())?;
             cosmocraft_log!(info, "tests", "Received pong {} with lag {}", i, lag);
         }
